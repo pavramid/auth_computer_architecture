@@ -33,3 +33,12 @@ mem-size 2GB
 TimingSimple: Πολύ απλός cpu. δεν έχει καν pipeline
 
 minorcpu: απλός in-order επεξεργαστής
+
+
+sim_insts                                        5028                       # Number of instructions simulated
+sim_ops                                          5834                       # Number of ops (including micro ops) simulated
+
+
+Συνολικός αριθμός προσπέλασης της L2 cache:
+
+system.cpu_cluster.l2.overall_accesses::total          479
