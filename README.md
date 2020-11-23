@@ -30,9 +30,9 @@ mem-size 2GB
 
 
 
-TimingSimple: Πολύ απλός cpu. δεν έχει καν pipeline
+TimingSimple: Πολύ απλός cpu. δεν έχει καν pipeline simulation.
 
-minorcpu: απλός in-order επεξεργαστής
+minorcpu: απλός in-order μονοπύρηνος επεξεργαστής. 2 Επίπεπα Caches.
 
 
 sim_insts                                        5028                       # Number of instructions simulated
