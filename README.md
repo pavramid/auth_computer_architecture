@@ -1,6 +1,6 @@
 # Αρχιτεκτονική Υπολογιστών - Εργασία 1 - Report
 
-## Μέρος πρώτο: Μια ματιά του starter_se.py
+## Μέρος 1ο: Μια ματιά του starter_se.py
 Κοιτάζοντας το starter_se.py μπορούμε να δούμε αρχικά τα προεπιλεγμένα command-line-args που λαμβάνει το script.
 Βασίζεται στο ενσωματωμένο(builtin) python module "argparse".
 Τα στοιχεία που έλαβα διαβάζοντας τον πηγαίο κώδικα είναι:
@@ -22,7 +22,7 @@
 7. Μέγεθος μνήμης, 2GB.
 
 
-## Μέρος δεύτερο: Επαληθεύοντας από τα config files.
+## Μέρος 2ο: Επαληθεύοντας από τα config files.
 ### α) Εν τέλει θα κοιτάξω μόνο από το config.ini καθώς είναι το ίδιο με το config.json αλλά πιο ευανάγνωστο για ανθρώπους. 
 1. Ο cpu πράγματι είναι τύπου "type=MinorCPU" όπως φαίνεται στην ενότητα "[system.cpu_cluster.cpus]"
 2. Έχουμε:`[system.clk_domain]
@@ -55,6 +55,12 @@ system.cpu_cluster.l2
 `system.cpu_cluster.cpus.dcache.demand_mshr_misses::total          147` και `system.cpu_cluster.cpus.icache.demand_misses::.cpu_cluster.cpus.inst          332`.
 Σύνολο δηλαδή: 147 + 332 = 479
 
+## Μέρος 3ο
+### α) Τα κύρια μοντέλα cpu που διαθέτει ο gem5 είναι τα εξής[6][7][8]:
+	1. SimpleCPU: Πρόκειται για πολύ απλό μοντέλο που απλά εκτελεί τις εντολές in-order και δεν έχει pipeline. Οι εντολές εκτολούνται δηλαδή σαν συναρτήσεις και τα memory latencies είτε είναι μηδενικά είτε βασίζονται σε απλές εκτιμήσεις. Χρησιμοποιείται συνήθως για την ταχύτητά του ώστε για παράδειγμα να ξεκινήσει έναν linux kernel και μετά γίνεται checkpoint και αλλαγή σε ένα πιο ακριβές μοντέλο
+	2. MinorCPU: Πρόκειται για πληρέστερο in-order μοντέλο, με ένα 4-stage pipeline [9]. Είναι εύλικτο, δηλαδή ππορεί να παραμετροπιηθεί ώστε να συνθέσει ένα πιο σύνθετο μοντέλο που προσοποιάζει έναν συγκεκριμένο επεξεργαστή με ανάλογες δυνατότητες.
+	3. O3CPU: Πρόκειται για ένα out-of-order μοντέλο με 5-stage pipeline. Έχουν γίνει προσπάθειες να είναι ιδιαίτερα ακριβές στους χρονισμούς του(timing accurate).
+
 
 **[1]**: Γραμμή 210 από MemConfig.py `if issubclass(intf, m5.objects.DRAMInterface) and \
                    opt_mem_ranks:00
@@ -63,3 +69,7 @@ system.cpu_cluster.l2
 **[3]**: https://en.wikipedia.org/wiki/Micro-operation
 **[4]**: http://learning.gem5.org/book/part1/gem5_stats.html
 **[5]**: https://superuser.com/questions/934752/do-arm-processors-like-cortex-a9-use-microcode
+**[6]**: https://www.gem5.org/documentation/general_docs/cpu_models/SimpleCPU
+**[7]**: https://stackoverflow.com/questions/58554232/what-is-the-difference-between-the-gem5-cpu-models-and-which-one-is-more-accurat
+**[8]**: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
+**[9]**: http://pages.cs.wisc.edu/~swilson/gem5-docs/classMinorCPU.html
