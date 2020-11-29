@@ -56,10 +56,10 @@ system.cpu_cluster.l2
 Σύνολο δηλαδή: 147 + 332 = 479
 
 
-- [1]: Γραμμή 210 από MemConfig.py `                if issubclass(intf, m5.objects.DRAMInterface) and \
+**[1]**: Γραμμή 210 από MemConfig.py `if issubclass(intf, m5.objects.DRAMInterface) and \
                    opt_mem_ranks:00
                     dram_intf.ranks_per_channel = opt_mem_ranks`και 277 από DRAMInterface.py `ranks_per_channel = 2`.
-- [2]: https://en.wikipedia.org/wiki/CPU_cache#History
-- [3]: https://en.wikipedia.org/wiki/Micro-operation
-- [4]: http://learning.gem5.org/book/part1/gem5_stats.html
-- [5]: https://superuser.com/questions/934752/do-arm-processors-like-cortex-a9-use-microcode
+**[2]**: https://en.wikipedia.org/wiki/CPU_cache#History
+**[3]**: https://en.wikipedia.org/wiki/Micro-operation
+**[4]**: http://learning.gem5.org/book/part1/gem5_stats.html
+**[5]**: https://superuser.com/questions/934752/do-arm-processors-like-cortex-a9-use-microcode
