@@ -47,14 +47,19 @@ system.cpu_cluster.l2
 ```
 ### β) commited εντολές.
 Έχουμε 5028 committed instructions. `system.cpu_cluster.cpus.committedInsts         5028`.Επιπλέον έχουμε 5834 committed ops. `system.cpu_cluster.cpus.committedOps             5834`
+Τελικά η διαφορά έχει να κάνει με το γεγονός ότι ο στα ops προσμετρώνται και τα micro-ops [4] τα οποία είναι περισσότερα από τα ops. Αυτό ισχύει ιδιαιτέρως στην αρχιτεκτονική της intel που από κάτω είναι απλή RISC αλλά ισχύει σε μικτότερο βαθμό ακόμα και στην RISC ARM[5].
 
-
-
-
-
+### γ) Προσπελάσεις L2 cache.
+Συνολικά η L2 cache προσπελάστηκε 479 φορές, όπως φαίνεται και από την καταχώρηση `system.cpu_cluster.l2.overall_accesses::total          479` στο status.txt.
+Οι προσπελάσεις της L2 μπορούν να υπολογιστούν έμμεσα από τα misses της L1i L1d (dcache και icache):
+`system.cpu_cluster.cpus.dcache.demand_mshr_misses::total          147` και `system.cpu_cluster.cpus.icache.demand_misses::.cpu_cluster.cpus.inst          332`.
+Σύνολο δηλαδή: 147 + 332 = 479
 
 
 - [1]: Γραμμή 210 από MemConfig.py `                if issubclass(intf, m5.objects.DRAMInterface) and \
                    opt_mem_ranks:00
                     dram_intf.ranks_per_channel = opt_mem_ranks`και 277 από DRAMInterface.py `ranks_per_channel = 2`.
 - [2]: https://en.wikipedia.org/wiki/CPU_cache#History
+- [3]: https://en.wikipedia.org/wiki/Micro-operation
+- [4]: http://learning.gem5.org/book/part1/gem5_stats.html
+- [5]: https://superuser.com/questions/934752/do-arm-processors-like-cortex-a9-use-microcode
