@@ -74,3 +74,105 @@ system.cpu_cluster.l2
 **[7]**: https://stackoverflow.com/questions/58554232/what-is-the-difference-between-the-gem5-cpu-models-and-which-one-is-more-accurat
 **[8]**: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
 **[9]**: http://pages.cs.wisc.edu/~swilson/gem5-docs/classMinorCPU.html
+
+# Αρχιτεκτονική Υπολογιστών - Εργασία 2 - Report
+
+## Βήμα 1
+### 1.
+```
+cache_line_size=64
+
+[system.cpu.dcache]
+assoc=2
+size=65536
+
+[system.cpu.icache]
+assoc=2
+size=32768
+
+[system.l2]
+assoc=8
+size=2097152
+```
+
+## 2. και 3.
+
+| 1GHZ | Χρόνος | CPI | L1d misses | L2i misses | L2 misses |
+|---|---|---|---|---|---|
+| specbzip | 160.703 | 1.607035 | 0.014133 | 0.000076 | 0.294739 |
+| specmcf | 109.233 | 1.092334 | 0.002038 | 0.000037 | 0.727788 |
+| spechmmer | 118.547 | 1.185466 | 0.001684 | 0.000204 | 0.079949 |
+| specsjeng | 705.453 | 7.054533 | 0.121829 | 0.000020 | 0.999979 |
+| speclibm | 262.248 | 2.622476 | 0.060971 | 0.000098 | 0.999927 |
+
+
+| 2GHZ | Χρόνος | CPI | L1d misses | L2i misses | L2 misses |
+|---|---|---|---|---|---|
+| specbzip | 83.847 | 1.676947 | 0.014289 | 0.000075 | 0.294749 |
+| specmcf | 55.471 | 1.109419 | 0.002038 | 0.000037 | 0.727788 |
+| spechmmer | 59.410 | 1.188197 | 0.001692 | 0.000204 | 0.079948 |
+| specsjeng | 513.819 | 10.276385 | 0.121829 | 0.000020 | 0.999979 |
+| speclibm | 174.779 | 3.495573 | 0.060971 | 0.000098 | 0.999927 |
+
+### System clock VS Cpu Cluster clock
+
+### system.cpu_clk_domain και system.clk_domain
+Η παράμετρος "cpu_clk_domain" ρυθμίζει τον cpu clock και τους L1d, L2i, και L2 caches ενώ η παράμετρος "clk_domain" ρυθμίζει το mmu, dvfs handler, memoryctrls, memory bus. Αν προστεθεί ένας ακόμη cpu, θα πάρει clock από το cpu_clk_domain.
+
+
+#### Χρόνος εκτέλεσης.
+
+Παρατηρώ ότι τα benchmark που έχουν μεγάλο miss-rate, ιδίως τα specsjeng και speclibm
+έχουν κακό scaling της απόδοσης σε σχέση με το διπλασιασμό της συχνότητας. Τα πολλά misses συμβάλουν στην σπατάλη κύκλων του επεξερτγαστή, και καθώς τα cache latencies είναι ανεξάρτητα της συχνότητας, παίρνουν τον ίδιο χρόνο. Επομένως στα 2GHz θα έχουμε περισσότερους κύκλους που χάνονται περιμένοντας την μνήμη. Αντίθετα τα benches που έχουν χαμηλά miss-rate έχουν καλό scaling και αυτό αντανακλάται στο CPI που δεν ανεβαίνει πολύ.
+
+## Βήμα 2
+### 401.bzip2
+- L1i Cache
+![](ergasia2/plots/specbzip/l1i.png)
+- L1d Cache
+![](ergasia2/plots/specbzip/l1d.png)
+- L2 Cache
+![](ergasia2/plots/specbzip/l2.png)
+- Cache Line Size
+![](ergasia2/plots/specbzip/cache_line.png)
+
+### 401.bzip2
+- L1i Cache
+![](ergasia2/plots/specmcf/l1i.png)
+- L1d Cache
+![](ergasia2/plots/specmcf/l1d.png)
+- L2 Cache
+![](ergasia2/plots/specmcf/l2.png)
+- Cache Line Size
+![](ergasia2/plots/specmcf/cache_line.png)
+
+### 401.bzip2
+- L1i Cache
+![](ergasia2/plots/spechmmer/l1i.png)
+- L1d Cache
+![](ergasia2/plots/spechmmer/l1d.png)
+- L2 Cache
+![](ergasia2/plots/spechmmer/l2.png)
+- Cache Line Size
+![](ergasia2/plots/spechmmer/cache_line.png)
+
+### 401.bzip2
+- L1i Cache
+![](ergasia2/plots/specsjeng/l1i.png)
+- L1d Cache
+![](ergasia2/plots/specsjeng/l1d.png)
+- L2 Cache
+![](ergasia2/plots/specsjeng/l2.png)
+- Cache Line Size
+![](ergasia2/plots/specsjeng/cache_line.png)
+
+### 401.bzip2
+- L1i Cache
+![](ergasia2/plots/speclibm/l1i.png)
+- L1d Cache
+![](ergasia2/plots/speclibm/l1d.png)
+- L2 Cache
+![](ergasia2/plots/speclibm/l2.png)
+- Cache Line Size
+![](ergasia2/plots/speclibm/cache_line.png)
+
