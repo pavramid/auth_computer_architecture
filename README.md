@@ -302,9 +302,9 @@ size=2097152
 
 ### 2.
 - Peak Dynamic - L2
-![](ergasia3/mcpat_plots/Peak Dynamic_L2.png)
+![](ergasia3/mcpat_plots/Peak_Dynamic_L2.png)
 - Peak Dynamic - Core
-![](ergasia3/mcpat_plots/Peak Dynamic_Core:.png)
+![](ergasia3/mcpat_plots/Peak_Dynamic_Core:.png)
 - Area - L2
 ![](ergasia3/mcpat_plots/Area_L2.png)
 - Area - Core
