@@ -136,7 +136,7 @@ size=2097152
 - Cache Line Size
 ![](ergasia2/plots/specbzip/cache_line.png)
 
-### 401.bzip2
+### 429.mcf
 - L1i Cache
 ![](ergasia2/plots/specmcf/l1i.png)
 - L1d Cache
@@ -146,7 +146,7 @@ size=2097152
 - Cache Line Size
 ![](ergasia2/plots/specmcf/cache_line.png)
 
-### 401.bzip2
+### 456.hmmer
 - L1i Cache
 ![](ergasia2/plots/spechmmer/l1i.png)
 - L1d Cache
@@ -156,7 +156,7 @@ size=2097152
 - Cache Line Size
 ![](ergasia2/plots/spechmmer/cache_line.png)
 
-### 401.bzip2
+### 458.sjeng
 - L1i Cache
 ![](ergasia2/plots/specsjeng/l1i.png)
 - L1d Cache
@@ -166,7 +166,7 @@ size=2097152
 - Cache Line Size
 ![](ergasia2/plots/specsjeng/cache_line.png)
 
-### 401.bzip2
+### 470.lbm
 - L1i Cache
 ![](ergasia2/plots/speclibm/l1i.png)
 - L1d Cache
@@ -176,3 +176,136 @@ size=2097152
 - Cache Line Size
 ![](ergasia2/plots/speclibm/cache_line.png)
 
+## Βήμα 3
+### Κατασκευή Συνάρτησης Κόστους
+Και η l1 και η l1 caches τυπικά φτιάχνονται από SRAM Cells, αλλά η l1 είναι βελτιστοποιημένη για απόδοση.(φτιάχνεται με ελαφρώς μεγαλύτερα τρανζίστορ και παχύτερα καλώδια) ενώ η l2 βελτιστοπιείται για μεγάλη πυκνότητα λογικής.
+Η φόρμουλα που κατέληξα είναι: l1*8 + l2 + ((l1_assoc-c1*l1)^1.2) + ((l2_assoc-c1*l2)^1.2) + cls
+όπου l1 και l2 τα μεγεθη των caches, l1_assoc και l2_assoc τα αντίστοιχα associativities, cls το cache line size και c1,c2 απροσδιόριστες σταθερες. Οι όροι των associativities μοντελοποιούν τη μη γραμμική αύξηση της ενέργειας ανάγνωσης δεδομένων και οι όροι c1*l1 και c2*l2 μοντελοποιούν το γεγονός ότι για μεγαλύτερα caches το φαινόμενο είναι πιο ήπιο. (Figure 2.9 από Patterson, σελίδα 97 στο Αγγλικό βιβλίο).
+
+1. Για το "401.bzip2" επέλεξα το ελάχιστο l1i cache και associativity (64kB, 2-way), καθώς είχαν ελάχιστο αντίκτυπο στο CPI. Αντίθετα, το l1d cache έπαιξε ρόλο και για αυτό επέλεξα (256kB, 2-way) - το associativity επηρεάζει ελάχιστα το CPI. Για το l2 επέλεξα (512kB, 2-way) καθώς οι διαφορές και των δύο αυτών παραμέτρων είναι είναι και εδώ ελάχιστες. Το cache line size είχε μια μικρή διαφορά ως τα 128 bytes αλλά επέλεξα να μην το πάρω για λόγους κόστους.
+2. Για το "429.mcf" επέλεξα ξανά (64kB, 2-way) για το l1i καθώς και πάλι οι διαφορές ήταν μηδαμινές. Επίσης αυτή τη φορά και το l1d είχε ελάχιστη διαφορά οπότε πήρα και πάλι (128kB 2-way). Για την l2 διάλεξα 2-way associativity λαμβάνοντας υπόψιν ότι δεν είχε κάποια διαφορά και το μέγεθο στα 2048kB όπου και είχαμε μια μικρή πτώση του CPI, αλλά όχι στα 4096. Τέλος, το cache line size είχε μια μικρή αλλά μη αμελητέα βελτίωση στα 128 bytes αλλά στα 256 όχι μόνο δεν έπεσε το CPI αλλά ανέβηκε. Οπότε επέλεξα 128.
+3. Για το "456.hmmer" έλαβα για τους ίδιους λόγους με το "429.mcf" (64kB, 2-way) για την l1i και για την l1d (128kB 2-way). Τα l2 benchmarks είχαν μηδαμινή διαφοροποίηση στην απόδωση οπότε έλαβα (512kB 2-way). Παρομοίως και το cache line size, οπότε έμεινα στα 64 bytes.
+4. Για το "458.sjeng" πήρα (64kB, 2-way) για l1i και (128kB 2-way) για l1d, αφού δεν είχε σχεδόν καθόλου διαφορά το CPI. Παρομοίως και στο l2, οπότε επέλεξα (512kB, 2-way). Μόνο το cache line size επηρέασε και αυτό αρκετά, οπότε πήρα 256 Bytes.
+5. Εδώ τα γραφήματα του "470.lbm" είναι πολύ όμοια με του "458.sjeng",  οπότε επέλεξα τις ίδιες παραμέτρους και μεγέθη.
+
+# Αρχιτεκτονική Υπολογιστών - Εργασία 3 - Report
+
+## Ερωτήματα
+### 1. Dynamic power, Leakage.
+Η Διαρροή (Leakage) ή αλλιώς η στατική(Static power) κατανάλωση είναι η κατανάλωση του κυκλώματος ακόμα και όταν αυτό είναι ανενεργό. Διακρίνεται σε Gate Leakage και Subthreshold Leakage. Η πρώτη είναι η διαρροή ρεύματος από την πύλη, καθώς οι σημερινές τεχνολογίες έχουν πολύ μικρό πάχος στο διηλεκτρικό (οξείδιο) πύλης, και έτσι μέσω κβαντικής σηράγγωσης έχουμε διαρροή. Επίσης το Subthreshold Leakage είναι η διαρροή ρεύματος εκκροής-πηγής. Από την άλλη η Δυναμική κατανάλωση συνδέεται με ροή ρεύματος από την φόρτιση και εκφρόρτιση παρασιτικών χωρητικοτήτων. Η εκτέλεση διαφορετικών προγραμμάτων σε έναν επεξεργαστή θα επηρέαζε κυρίως την δυναμική κατανάλωση ισχύος, η οποία εξαρτάται από τις φορτοεκφρτίσεις χωρητικοτήτων ενώ η στατική κατανάλωση δεν επηρεάζεται. Η διαφορά στο χρόνο μεταξύ δύο προγραμμάτων θα επηρεάσει την συνολική ενέργεια που καταναλώνουν αλλά όχι την ισχύ.
+### 2. 4 vs 40 Watt CPU
+Η διαφορά στην κατανάλωση δεν είναι αρκετή πληροφορία, γιατί μπορεί για παράδειγμα ο πιο ενεργοβόρος επεξεργαστής να είναι αρκετά πιο γρήγορος με αποτέλεσμα να τρέχει για λιγότερη ώρα και να τελειώνει γρηγορότερα. Έτσι η κατανάλωση ενέργειας θα μπορούσε να είναι πιο μικρή τελικά. Για να το ξέρουμε αυτό θα πρέπει να τρέξουμε το προγράμματα στο gem5 για να δούμε ποιός επεξεργαστής είναι πιο αποδοτικός.
+### 3. ARM vs XEON
+Ο Xeon είναι 40 φορές γρηγορότερος από τον ARM A9, αλλά ο ARM έχει μέγιστη κατανάλωση 1.74189 W σε αντίθεση με τα 134.938 W του Xeon, 77.47 φορές περισσότερη ισχύ. Δηλαδή αν οι επεξεργαστές δούλευαν στη μέγιστη ισχύ τους, ο ARM θα χρειαζόταν μόνο 40 φορές περισσότερο χρόνο από, άρα η ενέργεια που είναι ισχύς επί χρόνος θα ήτανε και πάλι λιγότερηα από τον Xeon. Αλλά ακόμα και αν ο Xeon δε χρησιμοποιούσε την μέγιστη ισχύ του για να κοντράρει τον ARM, έχει πολύ μεγαλύτερη κατανάλωση στατική (Xeon: 36.8319 W, ARM:0.108687 W). Επομένως εάν αφεθούν οι επεξεργαστές να κάθονται σε αδράνεια μετά την εκτέλεση της εφαρμογής, ο Xeon θα ξεπεράσει τον ARM σε ενέργεια.
+## Ερωτήματα
+### 1. Υπολογισμός Κατανάλωσης Ενέργειας.
+Η Ενέργεια υπολογίζεται αν αθροιστούν οι επιμέρους στατικές καταναλώσεις (Subthreshold Leakage, Gate Leakage) με την Runtime Dynamic για τον Core και την L2.
+
+
+| Benchmark | Κατανάλωση Ισχύος σε W |
+| --- | --- |
+| specbzip_l2_1024kb_4-way | 1.421 |
+| specbzip_cache_line_256_bytes | 3.663 |
+| specbzip_l2_2048kb_4-way | 1.430 |
+| specbzip_l1d_128kb_2-way | 1.814 |
+| specbzip_cache_line_128_bytes | 1.795 |
+| specbzip_l1i_128kb_2-way | 2.121 |
+| specbzip_l2_2048kb_2-way | 1.429 |
+| specbzip_l2_512kb_2-way | 1.411 |
+| specbzip_l2_512kb_4-way | 1.411 |
+| specbzip_cache_line_64_bytes | 1.430 |
+| specbzip_l1i_64kb_4-way | 1.560 |
+| specbzip_l2_4096kb_2-way | 1.442 |
+| specbzip_l2_1024kb_2-way | 1.419 |
+| specbzip_l2_4096kb_4-way | 1.443 |
+| specbzip_l1d_256kb_4-way | 1.989 |
+| specbzip_l1d_256kb_2-way | 2.113 |
+| specbzip_l1i_128kb_4-way | 1.859 |
+| specbzip_l1d_128kb_4-way | 1.575 |
+| specbzip_l1i_64kb_2-way | 1.835 |
+| specsjeng_l2_2048kb_2-way | 1.267 |
+| specsjeng_cache_line_128_bytes | 1.602 |
+| specsjeng_l2_4096kb_2-way | 1.277 |
+| specsjeng_l2_512kb_2-way | 1.257 |
+| specsjeng_l1i_64kb_2-way | 1.673 |
+| specsjeng_l1i_128kb_4-way | 1.691 |
+| specsjeng_l2_512kb_4-way | 1.257 |
+| specsjeng_l1d_128kb_2-way | 1.598 |
+| specsjeng_l1i_128kb_2-way | 1.958 |
+| specsjeng_cache_line_256_bytes | 3.456 |
+| specsjeng_l2_2048kb_4-way | 1.268 |
+| specsjeng_l2_4096kb_4-way | 1.277 |
+| specsjeng_l2_1024kb_2-way | 1.261 |
+| specsjeng_l1d_128kb_4-way | 1.349 |
+| specsjeng_l1d_256kb_2-way | 1.855 |
+| specsjeng_cache_line_64_bytes | 1.268 |
+| specsjeng_l2_1024kb_4-way | 1.261 |
+| specsjeng_l1i_64kb_4-way | 1.398 |
+| specsjeng_l1d_256kb_4-way | 1.696 |
+| spechmmer_cache_line_256_bytes | 3.556 |
+| spechmmer_l1i_128kb_2-way | 2.164 |
+| spechmmer_l1i_128kb_4-way | 1.908 |
+| spechmmer_l1d_128kb_2-way | 1.866 |
+| spechmmer_l2_4096kb_2-way | 1.479 |
+| spechmmer_l2_512kb_4-way | 1.469 |
+| spechmmer_l1d_256kb_4-way | 2.050 |
+| spechmmer_l2_4096kb_4-way | 1.479 |
+| spechmmer_l2_1024kb_2-way | 1.471 |
+| spechmmer_l1i_64kb_2-way | 1.879 |
+| spechmmer_l1i_64kb_4-way | 1.604 |
+| spechmmer_l1d_256kb_2-way | 2.168 |
+| spechmmer_l2_2048kb_2-way | 1.474 |
+| spechmmer_l2_1024kb_4-way | 1.471 |
+| spechmmer_cache_line_64_bytes | 1.474 |
+| spechmmer_l2_2048kb_4-way | 1.474 |
+| spechmmer_l2_512kb_2-way | 1.469 |
+| spechmmer_l1d_128kb_4-way | 1.629 |
+| spechmmer_cache_line_128_bytes | 1.803 |
+| specmcf_cache_line_64_bytes | 1.454 |
+| specmcf_l2_512kb_4-way | 1.449 |
+| specmcf_l1d_256kb_2-way | 2.130 |
+| specmcf_cache_line_256_bytes | 3.537 |
+| specmcf_l1i_64kb_4-way | 1.584 |
+| specmcf_l1d_128kb_4-way | 1.598 |
+| specmcf_l1d_256kb_4-way | 2.005 |
+| specmcf_l2_2048kb_4-way | 1.454 |
+| specmcf_l2_1024kb_4-way | 1.451 |
+| specmcf_l2_1024kb_2-way | 1.451 |
+| specmcf_l1i_128kb_2-way | 2.144 |
+| specmcf_l1i_128kb_4-way | 1.888 |
+| specmcf_l1i_64kb_2-way | 1.859 |
+| specmcf_l2_512kb_2-way | 1.449 |
+| specmcf_l2_2048kb_2-way | 1.454 |
+| specmcf_l1d_128kb_2-way | 1.838 |
+| specmcf_l2_4096kb_4-way | 1.460 |
+| specmcf_cache_line_128_bytes | 1.771 |
+| specmcf_l2_4096kb_2-way | 1.460 |
+| speclibm_l2_1024kb_4-way | 1.314 |
+| speclibm_l1i_128kb_4-way | 1.746 |
+| speclibm_l2_4096kb_2-way | 1.328 |
+| speclibm_l2_2048kb_4-way | 1.319 |
+| speclibm_l2_512kb_2-way | 1.310 |
+| speclibm_l1i_128kb_2-way | 2.010 |
+| speclibm_l1d_128kb_2-way | 1.664 |
+| speclibm_l1d_256kb_2-way | 1.932 |
+| speclibm_l2_1024kb_2-way | 1.314 |
+| speclibm_cache_line_256_bytes | 3.466 |
+| speclibm_cache_line_128_bytes | 1.671 |
+| speclibm_l1i_64kb_4-way | 1.449 |
+| speclibm_l1d_256kb_4-way | 1.783 |
+| speclibm_l1d_128kb_4-way | 1.418 |
+| speclibm_l2_4096kb_4-way | 1.328 |
+| speclibm_l2_2048kb_2-way | 1.319 |
+| speclibm_l2_512kb_4-way | 1.310 |
+| speclibm_cache_line_64_bytes | 1.320 |
+| speclibm_l1i_64kb_2-way | 1.725 |
+
+### 2.
+- Peak Dynamic - L2
+![](ergasia3/mcpat_plots/Peak Dynamic_L2.png)
+- Peak Dynamic - Core
+![](ergasia3/mcpat_plots/Peak Dynamic_Core:.png)
+- Area - L2
+![](ergasia3/mcpat_plots/Area_L2.png)
+- Area - Core
+![](ergasia3/mcpat_plots/Area_Core:.png)
