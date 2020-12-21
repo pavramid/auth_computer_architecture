@@ -201,6 +201,10 @@ size=2097152
 ### 1. Υπολογισμός Κατανάλωσης Ενέργειας.
 Η Ενέργεια υπολογίζεται αν αθροιστούν οι επιμέρους στατικές καταναλώσεις (Subthreshold Leakage, Gate Leakage) με την Runtime Dynamic για τον Core και την L2.
 
+ - Power-delay Product (PDP) = Pavg * t
+
+ - Energy-delay Product (EDP) = PDP * t
+creased delay for lower energy/operation
 
 | Benchmark | Κατανάλωση Ισχύος σε W |
 | --- | --- |
@@ -309,3 +313,6 @@ size=2097152
 ![](ergasia3/mcpat_plots/Area_L2.png)
 - Area - Core
 ![](ergasia3/mcpat_plots/Area_Core:.png)
+
+
+[1] https://technobyte.org/cmos-inverter-power-energy-consumption/
